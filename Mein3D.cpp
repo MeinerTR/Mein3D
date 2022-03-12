@@ -4,6 +4,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 void Error(const char *Message);
 
 #include "./Headers/input.h"
@@ -20,17 +24,21 @@ int main(int argc, char** argv) {
     } InitOpenGL(); InitWindow();
 
     while (!glfwWindowShouldClose(Window)) {
-        HandleKeyboard();
 
+        float CurrentFrame = static_cast<float>(glfwGetTime());
+                        DeltaTime = CurrentFrame - LastFrame;
+                                    LastFrame = CurrentFrame;
+
+        HandleKeyboard();
         glfwGetFramebufferSize(Window, &Width, &Height);
         glfwSetFramebufferSizeCallback(Window, Reshape);
 
-        gluLookAt(AngleEX, AngleEY, AngleEZ,
-        CharacterX, CharacterY, CharacterZ,
-        /*:> :>*/AngleUX, AngleUY, AngleUZ);
+        gluLookAt(CameraF.x, CameraF.y, CameraF.z,
+                  CameraP.x, CameraP.y, CameraP.z,
+                  CameraU.x, CameraU.y, CameraU.z);
 
         HandleDisplay();
-        glfwPollEvents();   
+        glfwPollEvents(); 
 
     } glfwTerminate(); return EXIT_SUCCESS;
 }

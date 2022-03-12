@@ -9,7 +9,7 @@ void HandleDisplay() {
  
    // Render a color-cube consisting of 6 quads with different colors
    glLoadIdentity();                 // Reset the model-view matrix
-   glTranslatef(CharacterX, CharacterY, CharacterZ);
+   glTranslatef(CameraP.x, CameraP.y, CameraP.z);
  
  	glBegin(GL_QUADS);
         glColor3f(0.0f, 1.0f, 0.0f);     // Green

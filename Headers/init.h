@@ -1,7 +1,11 @@
-GLFWwindow* Window;
-int Width, Height;
-int AngleEX = 0, AngleEY = 0, AngleEZ = 3,
-	AngleUX = 0, AngleUY = 1, AngleUZ = 0;
+GLFWwindow* Window; int Width, Height;
+float yaw   = -90.0f;
+float pitch =  0.0f;
+float lastX =  1280.0f / 2.0;
+float lastY =  768.0f / 2.0;
+float DeltaTime = 0.0f;
+float LastFrame = 0.0f;
+bool FirstCalled = true;
 
 void Reshape(GLFWwindow* window, int width, int height)
 {
@@ -17,18 +21,52 @@ void Reshape(GLFWwindow* window, int width, int height)
 				GLFW_DONT_CARE, GLFW_DONT_CARE);
 }
 
-void HandleKeyboard()
-{
+void HandleMouse(GLFWwindow* window, double MouseX, double MouseY) {
+	float xpos = static_cast<float>(MouseX);
+    float ypos = static_cast<float>(MouseY);
+    if (FirstCalled) {
+	    lastX = xpos;
+	    lastY = ypos;
+	    FirstCalled = false;
+	} 
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.1f; // change this value to your liking
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 89.0f)
+	    pitch = 89.0f;
+	if (pitch < -89.0f)
+	    pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	CameraP = glm::normalize(front);
+}
+
+void HandleKeyboard() {
     if (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     	glfwSetWindowShouldClose(Window, true);
-    if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
-    	CharacterZ += 0.1f;
-    if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
-    	CharacterX += 0.1f;
-    if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
-    	CharacterZ -= 0.1f;
-    if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
-    	CharacterX -= 0.1f;
+
+    float CameraS = static_cast<float>(2.5 * DeltaTime);
+    if (glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS) {
+    	CameraP += CameraS * CameraP;}
+    if (glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS) {
+    	CameraP -= CameraS * CameraP;}
+    if (glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS) {
+    	CameraP -= glm::normalize(glm::cross(CameraF, CameraU)) * CameraS;}
+    if (glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS) {
+    	CameraP += glm::normalize(glm::cross(CameraF, CameraU)) * CameraS;}
     glfwSwapBuffers(Window);
 }
 
@@ -50,6 +88,8 @@ void InitWindow() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0f, Aspect, 0.1f, 100.0f);
+
+	glfwSetCursorPosCallback(Window, HandleMouse);  
 	glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 

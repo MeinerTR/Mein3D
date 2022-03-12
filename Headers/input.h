@@ -1,4 +1,6 @@
-float CharacterX = 0.0f, CharacterY = 0.0f, CharacterZ = 0.0f;
+glm::vec3 CameraP = glm::vec3(0.0f, 0.0f, 3.0f),
+		  CameraF = glm::vec3(0.0f, 0.0f, -2.0f),
+		  CameraU = glm::vec3(0.0f, 1.0f, 0.0f);
 
 std::string Split(std::string String, const char *Character) {
 	std::string Output = ""; char Char;
