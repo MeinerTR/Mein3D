@@ -1,8 +1,7 @@
 GLFWwindow* Window; int Width, Height;
-float yaw   = -90.0f;
-float pitch =  0.0f;
-float lastX =  1280.0f / 2.0;
-float lastY =  768.0f / 2.0;
+float Yaw   = -90.0f;
+float Pitch =  0.0f;
+float LastX; float LastY;
 float DeltaTime = 0.0f;
 float LastFrame = 0.0f;
 bool FirstCalled = true;
@@ -22,36 +21,32 @@ void Reshape(GLFWwindow* window, int width, int height)
 }
 
 void HandleMouse(GLFWwindow* window, double MouseX, double MouseY) {
-	float xpos = static_cast<float>(MouseX);
-    float ypos = static_cast<float>(MouseY);
+	float PosX = static_cast<float>(MouseX);
+    float PosY = static_cast<float>(MouseY);
     if (FirstCalled) {
-	    lastX = xpos;
-	    lastY = ypos;
-	    FirstCalled = false;
-	} 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	lastX = xpos;
-	lastY = ypos;
+	    LastX = PosX;
+	    LastY = PosY;
+	    FirstCalled = false;   } 
+	float OffsetX = PosX - LastX;
+	float OffsetY = LastY - PosY;
+	LastX = PosX; LastY = PosY;
 
-	float sensitivity = 0.1f; // change this value to your liking
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
+	float Sensitivity = 0.1f;
+	OffsetX *= Sensitivity;
+	OffsetY *= Sensitivity;
 
-	yaw += xoffset;
-	pitch += yoffset;
+	Yaw += OffsetX; Pitch += OffsetY;
 
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (pitch > 89.0f)
-	    pitch = 89.0f;
-	if (pitch < -89.0f)
-	    pitch = -89.0f;
+	if (Pitch > 89.0f)
+	    Pitch = 89.0f;
+	if (Pitch < -89.0f)
+	    Pitch = -89.0f;
 
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	CameraP = glm::normalize(front);
+	glm::vec3 Front;
+	Front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+	Front.y = sin(glm::radians(Pitch));
+	Front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+	CameraP = glm::normalize(Front);
 }
 
 void HandleKeyboard() {
@@ -74,11 +69,11 @@ void InitWindow() {
 	Width = std::stoi(INI("./settings.ini", 1));
 	Height = std::stoi(INI("./settings.ini", 2));
   	Window = glfwCreateWindow(Width, Height, "Mein3D", NULL, NULL);
-  	if (!Window)
-  	{
+  	if (!Window){
     	glfwTerminate();
     	exit(EXIT_FAILURE);
- 	}
+ 	} LastX = (float) Width / 2.0; LastY = (float) Height / 2.0;
+
     glfwMakeContextCurrent(Window);
     if (Height == 0) Height = 1;
 	GLfloat Aspect = (GLfloat)Width / (GLfloat)Height;
