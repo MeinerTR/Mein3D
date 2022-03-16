@@ -6,6 +6,16 @@
 #endif
 
 int Width, Height; char *CWD;
+glm::vec3 _Camera = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 Camera_ = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 Cam_era = glm::vec3(0.0f, 1.0f, 0.0f);
+bool FirstCalled = true;
+float Yaw = -90.0f;
+float Pitch = 0.0f;
+float LastX, LastY;
+float Fov =  45.0f;
+float DeltaTime = 0.0f;
+float LastFrame = 0.0f;
 
 std::string Merged(const char *A, const char *B) {
 	std::string Output = ""; Output += A; Output += B; return Output; }
@@ -31,22 +41,3 @@ std::string INI(std::string Path, const char *Class, const int WhichOne) {
 			CurrentOne++;} if (WhichOne == CurrentOne) {
 				Output += Split(Word, ": ", 1); break;} 
 			Word = ""; } else {Word += Char;}}} fclose(File); return Output;}
-
-void InitMein3D() {
-	if ((CWD = getcwd(NULL, 0)) == NULL) {Error("Failed to get current directory!", 0);}
-	try { Width = std::stoi(INI(Merged(CWD, "/settings.ini"), "Window", 0));
-	} catch (const std::invalid_argument & e) {
-		std::cout << CWD << "/settings.ini -> Width -> Invalid_Argument!" << std::endl;
-		Width = 1280; }
-	try { Height = std::stoi(INI(Merged(CWD, "/settings.ini"), "Window", 1));
-	} catch (const std::invalid_argument & e) {
-		std::cout << CWD << "/settings.ini -> Height -> Invalid_Argument!" << std::endl;
-		Height = 768; }
-	Window = glfwCreateWindow(Width, Height, "Mein3D", NULL, NULL);
-	glfwMakeContextCurrent(Window); if (!Window) {Error("Unable to create GLFW3 window!", 0);}
-}
-
-void InitOpenGL() {
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {Error("Unable to init GLAD!", 1);}
-	glViewport(0, 0, Width, Height);
-}
