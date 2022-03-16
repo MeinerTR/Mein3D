@@ -1,44 +1,29 @@
 #include <string>
-#include <cstdio>
+#include <errno.h>
+#include <iostream>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
 
-void Error(const char *Message);
+#define STB_IMAGE_IMPLEMENTATION
+#include "Headers/stb_image.h"
 
-#include "./Headers/input.h"
-#include "./Headers/init.h"
-#include "./Headers/display.h"
+GLFWwindow *Window; void Error(const char *Error_Message, int Way) {
+    if (Way == 0) {
+        std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl;; exit(-1);
+    } else {glfwTerminate(); std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl; glfwSetWindowShouldClose(Window, 1);}}
 
-void Error(const char *Message) {
-    printf("%s\n", Message); // HI
-    glfwWindowShouldClose(Window);
-}
+#include "Headers/input.h"
 
-int main(int argc, char** argv) {
-    if (!glfwInit()) { exit(EXIT_FAILURE);
-    } InitOpenGL(); InitWindow();
-
+int main(void) {
+    if (!glfwInit()) {Error("Unable to init GLFW3!", 0);}
+    InitMein3D(); InitOpenGL();
     while (!glfwWindowShouldClose(Window)) {
 
-        float CurrentFrame = static_cast<float>(glfwGetTime());
-                        DeltaTime = CurrentFrame - LastFrame;
-                                    LastFrame = CurrentFrame;
-
-        HandleKeyboard();
-        glfwGetFramebufferSize(Window, &Width, &Height);
-        glfwSetFramebufferSizeCallback(Window, Reshape);
-
-        gluLookAt(CameraF.x, CameraF.y, CameraF.z,
-                  CameraP.x, CameraP.y, CameraP.z,
-                  CameraU.x, CameraU.y, CameraU.z);
-
-        HandleDisplay();
-        glfwPollEvents(); 
-
+        glfwPollEvents();
     } glfwTerminate(); return EXIT_SUCCESS;
-}
+} 
