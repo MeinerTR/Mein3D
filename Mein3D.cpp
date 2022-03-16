@@ -15,7 +15,7 @@
 GLFWwindow *Window; void Error(const char *Error_Message, int Way) {
     if (Way == 0) {
         std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl;; exit(-1);
-    } else {glfwTerminate(); std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl; glfwSetWindowShouldClose(Window, 1);}}
+    } else {glfwTerminate(); std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl;}}
 
 #include "Headers/input.h"
 
