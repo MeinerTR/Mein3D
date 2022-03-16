@@ -18,12 +18,21 @@ GLFWwindow *Window; void Error(const char *Error_Message, int Way) {
     } else {glfwTerminate(); std::cout << "Error: " << Error_Message << "\\" << std::endl << strerror(errno) << std::endl;}}
 
 #include "Headers/input.h"
+#include "Headers/init.h"
+#include "Headers/display.h"
 
 int main(void) {
     if (!glfwInit()) {Error("Unable to init GLFW3!", 0);}
     InitMein3D(); InitOpenGL();
     while (!glfwWindowShouldClose(Window)) {
+        HandleKeyboard();
+
+        glfwSetCursorPosCallback(Window, HandleMouse);
+        glfwSetScrollCallback(Window, HandleMouseScrool);
+        glfwSetFramebufferSizeCallback(Window, Reshape);
 
         glfwPollEvents();
+        HandleDisplay();
+        
     } glfwTerminate(); return EXIT_SUCCESS;
 } 
